@@ -42,6 +42,7 @@ int main(){
         free(tarea[i]->Descripcion);
         free(tarea[i]);
     }
+    
     free(tarea);
     return 0;
 }
