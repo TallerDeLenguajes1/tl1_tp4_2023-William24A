@@ -11,6 +11,9 @@ struct Tarea {
 
 typedef struct Tarea Tareas;
 
+void buscarTarea(Tareas **C, int can);
+void mostrarTarea(Tareas **C, int can);
+
 int main(){
     int can,dur,i;
     char burr[100];
@@ -38,11 +41,13 @@ int main(){
         tarea[i]->Descripcion = (char *) malloc(sizeof(char)*strlen(burr)+1);
         strcpy(tarea[i]->Descripcion, burr);
     }
+    //Buscar tarea
+    buscarTarea(tarea, can);
     
     //Una vez cargada todas las tareas. Irá listando de a una las tareas y preguntando si se realizó o no la misma
 	int j=0;
 	for(i=0;i<can;i++){
-		printf("Termino esta tarea %d 1(yes) 0(No):", tarea[i]->TareaID);
+		printf("\nTermino esta tarea %d 1(yes) 0(No):", tarea[i]->TareaID);
 		scanf("%d",&dur);
 		if(dur){
 			terminada[j]=malloc(sizeof(Tareas));
@@ -53,20 +58,11 @@ int main(){
 	}
 	
 	printf("\n\nMostrar tareas terminadas");
-	for(i=0;i<can;i++){
-		if(terminada[i]!=NULL){
-			printf("\nID de tarea: %d", terminada[i]->TareaID);
-			printf("\nDescripcion de tarea: %s", terminada[i]->Descripcion);	
-		}
-	}
-	
+	mostrarTarea(terminada, can);
 	printf("\n\nMostrar tareas por terminar");
-	for(i=0;i<can;i++){
-		if(tarea[i]!=NULL){
-			printf("\nID de tarea: %d", tarea[i]->TareaID);
-			printf("\nDescripcion de tarea: %s", tarea[i]->Descripcion);	
-		}
-	}
+	mostrarTarea(tarea, can);
+	
+	
     //poner al final
     for(i=0;i<can;i++){ //Hay que limpiar todas las reservas
         free(tarea[i]);
@@ -76,4 +72,34 @@ int main(){
     free(tarea);
     free(terminada);
     return 0;
+}
+
+void buscarTarea(Tareas **C, int can){
+	int i,bus,f=1;
+	printf("Ingrese el numero a buscar: ");
+	scanf("%d",&bus);
+	
+	for(i=0;i<can && f ;i++){
+		if(C[i]->TareaID == bus){
+			printf("\nTarea existente");
+			printf("\nID de tarea: %d", C[i]->TareaID);
+			printf("\nDescripcion de tarea: %s", C[i]->Descripcion);
+			f=0;
+		}
+	}
+	
+	if(f){
+		printf("\nNo se encontro la taera.");
+	}
+	
+}
+
+void mostrarTarea(Tareas **C, int can){
+	int i;
+	for(i=0;i<can;i++){
+		if(C[i]!=NULL){
+			printf("\nID de tarea: %d", C[i]->TareaID);
+			printf("\nDescripcion de tarea: %s", C[i]->Descripcion);	
+		}
+	}
 }
