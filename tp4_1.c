@@ -11,6 +11,8 @@ struct Tarea {
 
 typedef struct Tarea Tareas;
 
+void buscarTarea(Tareas **C, int can);
+
 int main(){
     int can,dur,i;
     char burr[100];
@@ -38,11 +40,12 @@ int main(){
         tarea[i]->Descripcion = (char *) malloc(sizeof(char)*strlen(burr)+1);
         strcpy(tarea[i]->Descripcion, burr);
     }
-    
+    //bucar tarea
+    buscarTarea(tarea,can);
     //Una vez cargada todas las tareas. Irá listando de a una las tareas y preguntando si se realizó o no la misma
 	int j=0;
 	for(i=0;i<can;i++){
-		printf("Termino esta tarea %d 1(yes) 0(No):", tarea[i]->TareaID);
+		printf("\nTermino esta tarea %d 1(yes) 0(No):", tarea[i]->TareaID);
 		scanf("%d",&dur);
 		if(dur){
 			terminada[j]=malloc(sizeof(Tareas));
@@ -76,4 +79,23 @@ int main(){
     free(tarea);
     free(terminada);
     return 0;
+}
+
+void buscarTarea(Tareas **C, int can){
+	char cadena[100];
+	int i,j=1;
+	printf("\nIngrese palabra a buscar: ");
+	gets(cadena);
+	fflush(stdin);
+	for(i=0;i<can;i++){
+		if(strstr(C[i]->Descripcion, cadena)){
+			printf("\nTarea existente");
+			printf("\nID de tarea: %d", C[i]->TareaID);
+			printf("\nDescripcion de tarea: %s", C[i]->Descripcion);
+			j=0;
+		}
+	}
+	if(j){
+		printf("\nNo se encontraron tareas.");
+	}
 }
