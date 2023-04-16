@@ -42,10 +42,44 @@ int main(){
         tarea[i]->Descripcion = (char *) malloc(sizeof(char)*strlen(burr)+1);
         strcpy(tarea[i]->Descripcion, burr);
     }
-    //bucar tarea
-    BuscaTareaPorPalabra(tarea,can);
-    //Buscar tarea
-    BuscaTareaPorId(tarea, can);
+    
+    system("cls");
+    //interfas para buscar contenido
+    int bus;
+    printf("\nQuiere buscar tarea por ID marque 1.");
+    printf("\nQuiere buscar tarea por palabra marque 2.");
+    printf("\nSi no quiere buscar precione 0.\n");
+   	printf("\nIngrese su opcion:");
+    scanf("%d", &bus);
+    fflush(stdin);
+    system("cls");
+    while(bus){
+    	switch(bus){
+    		case 1:
+    			//Buscar tarea
+    			BuscaTareaPorId(tarea, can);
+    			printf("\n\nPresione entrer para continuar.");
+    			getchar();
+    			getchar();
+    			system("cls");
+    			break;
+    		case 2:
+    			//bucar tarea
+    			BuscaTareaPorPalabra(tarea,can);
+    			printf("\n\nPresione entrer para continuar.");
+				getchar();
+    			system("cls");
+    			break;
+    	}
+    	printf("\nQuiere buscar tarea por ID marque 1.");
+    	printf("\nQuiere buscar tarea por palabra marque 2.");
+    	printf("\nSi no quiere buscar precione 0.\n");
+    	printf("\nIngrese su opcion:");
+    	scanf("%d", &bus);
+    	fflush(stdin);
+    	system("cls");
+    }
+    
     
     //Una vez cargada todas las tareas. Irá listando de a una las tareas y preguntando si se realizó o no la misma
 	int j=0;
