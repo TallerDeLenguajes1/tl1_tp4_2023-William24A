@@ -12,10 +12,8 @@ struct Tarea {
 typedef struct Tarea Tareas;
 
 void BuscaTareaPorPalabra(Tareas **C, int can);
-<<<<<<< HEAD
-=======
 void mostrarTarea(Tareas **C, int can);
->>>>>>> busca-tarea
+void BuscaTareaPorId(Tareas **C, int can);
 
 int main(){
     int can,dur,i;
@@ -44,14 +42,11 @@ int main(){
         tarea[i]->Descripcion = (char *) malloc(sizeof(char)*strlen(burr)+1);
         strcpy(tarea[i]->Descripcion, burr);
     }
-<<<<<<< HEAD
     //bucar tarea
     BuscaTareaPorPalabra(tarea,can);
-=======
     //Buscar tarea
-    buscarTarea(tarea, can);
+    BuscaTareaPorId(tarea, can);
     
->>>>>>> busca-tarea
     //Una vez cargada todas las tareas. Irá listando de a una las tareas y preguntando si se realizó o no la misma
 	int j=0;
 	for(i=0;i<can;i++){
@@ -83,7 +78,6 @@ int main(){
 }
 
 void BuscaTareaPorPalabra(Tareas **C, int can){
-<<<<<<< HEAD
 	char cadena[100];
 	int i,j=1;
 	printf("\nIngrese palabra a buscar: ");
@@ -99,7 +93,10 @@ void BuscaTareaPorPalabra(Tareas **C, int can){
 	}
 	if(j){
 		printf("\nNo se encontraron tareas.");
-=======
+	}	
+}
+
+void BuscaTareaPorId(Tareas **C, int can){
 	int i,bus,f=1;
 	printf("Ingrese el numero a buscar: ");
 	scanf("%d",&bus);
@@ -116,7 +113,6 @@ void BuscaTareaPorPalabra(Tareas **C, int can){
 	if(f){
 		printf("\nNo se encontro la taera.");
 	}
-	
 }
 
 void mostrarTarea(Tareas **C, int can){
@@ -126,6 +122,5 @@ void mostrarTarea(Tareas **C, int can){
 			printf("\nID de tarea: %d", C[i]->TareaID);
 			printf("\nDescripcion de tarea: %s", C[i]->Descripcion);	
 		}
->>>>>>> busca-tarea
 	}
 }
