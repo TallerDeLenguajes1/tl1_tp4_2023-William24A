@@ -20,7 +20,7 @@ Lista* crearLista();
 Lista* CrearNodo(int x, char y[100], int dur);
 void insertar(Lista** L, int x, char y[100], int dur);
 void mostrarLista(Lista* L);
-void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista* lista);
+void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista* lista);
 void buscarTarea(Lista* lista);
 void buscarID(Lista* lista, int op);
 void buscarPalabra(Lista* lista, char cadena[100]);
@@ -30,6 +30,8 @@ int main(){
 	Lista* nueva= crearLista();
 	Lista* term=crearLista();
 	Lista* noTerm=crearLista();
+	Lista* enPro=crearLista();
+
 	int i=0, op;
 	char cadena[100];
 	do{
@@ -38,7 +40,7 @@ int main(){
 		printf("\nTareas ingresadas hasta el momento: %d", i);
 		printf("\n\n1-Para ingresar nuevas tareas presione.");
 		printf("\n2-Para buscar tareas.");
-		printf("\n3-Para seleccionar tareas terminadas y no terminadas.");
+		printf("\n3-Para describir el estado de la tarea.");
 		printf("\n0-Para salir.");
 		printf("\n\nRespuesta:");
 		scanf("%d",&op);
@@ -61,12 +63,14 @@ int main(){
 				break;
 			case 3:
 				system("cls");
-				tareasTerminadas(&term,&noTerm,nueva);
+				tareasTerminadas(&term,&noTerm,&enPro,nueva);
 				system("cls");
 				printf("Tareas terminadas: ");
 				mostrarLista(term);
 				printf("\nTareas no terminadas: ");
 				mostrarLista(noTerm);
+				printf("\nTareas en proceso: ");
+				mostrarLista(enPro);
 				printf("\nPresione entere para continuar.");
 				getchar();
 				getchar();
@@ -119,18 +123,29 @@ void mostrarLista(Lista* L){
 	}
 }
 
-void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista* lista){
+void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista* lista){
 	Lista* aux=lista;
 	int resp;
 
 	while(aux){
-		printf("Terminaste la tarea %d? 1(yes) 0(no): ", aux->T.TareaID);
+		system("cls");
+		printf("Describa el estado de la tarea %d: ", aux->T.TareaID);
+		printf("\n1-Tarea terminada.");
+		printf("\n2-Tarea No terminada.");
+		printf("\n3-Tarea en proceso.");
+		printf("\nRespuesta:");
 		scanf("%d", &resp);
 	
-		if(resp){
-			insertar(terminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
-		}else{
-			insertar(noTerminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+		switch(resp){
+			case 1:
+				insertar(terminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				break;
+			case 2:
+				insertar(noTerminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				break;
+			case 3:
+				insertar(EnProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				break;
 		}	
 		aux=aux->Siguiente;	
 	}
