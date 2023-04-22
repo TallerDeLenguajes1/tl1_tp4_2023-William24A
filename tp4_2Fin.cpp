@@ -25,14 +25,16 @@ void buscarTarea(Lista* lista);
 void buscarID(Lista* lista, int op);
 void buscarPalabra(Lista* lista, char cadena[100]);
 void ingresarDatos(Lista** lista,int *i);
+Lista* EliminarTarea(Lista** lista, int id);
 
 int main(){
 	Lista* nueva= crearLista();
 	Lista* term=crearLista();
 	Lista* noTerm=crearLista();
 	Lista* enPro=crearLista();
+	Lista* Nodo;
 
-	int i=0, op;
+	int i=0, op, elim;
 	char cadena[100];
 	do{
 		system("cls");
@@ -41,6 +43,7 @@ int main(){
 		printf("\n\n1-Para ingresar nuevas tareas presione.");
 		printf("\n2-Para buscar tareas.");
 		printf("\n3-Para describir el estado de la tarea.");
+		printf("\n4-Eliminar tarea.");
 		printf("\n0-Para salir.");
 		printf("\n\nRespuesta:");
 		scanf("%d",&op);
@@ -74,6 +77,24 @@ int main(){
 				printf("\nPresione entere para continuar.");
 				getchar();
 				getchar();
+				break;
+			case 4:
+				system("cls");	
+				if(i){
+					printf("Ingrese el ID de la tarea que quiere eliminar:");
+					scanf("%d", &elim);
+					Nodo= EliminarTarea(&nueva, elim);
+					if(Nodo){
+						i--;
+						free(Nodo->T.Descripcion);
+						free(Nodo);	
+					}
+					
+				}else{
+					printf("\nNo ingreso tareas.");
+					printf("\nPresione enter para continuar.");
+					getchar();	
+				}					
 				break;
 			case 0:
 				system("cls");
@@ -251,4 +272,27 @@ void ingresarDatos(Lista** lista, int *i){
 		printf("Desea ingresar otra tarea? yes(1) no(0)\n");
 		scanf("%d",&can);
 	}while(can!=0);
+}
+
+Lista* EliminarTarea(Lista** lista, int id){
+	Lista* aux= *lista;
+	Lista* auxAnterior= *lista;
+	
+	while(aux && aux->T.TareaID != id){
+		auxAnterior=aux;
+		aux=aux->Siguiente;
+	}
+	
+	if(aux){
+		if(aux == *lista){
+			*lista =aux->Siguiente;
+		}else{
+			auxAnterior->Siguiente=aux->Siguiente;
+		}
+		aux->Siguiente=NULL;
+		printf("Tarea eliminada... presione enter para continuar.");
+		getchar();
+		getchar();
+	}
+	return aux;
 }
