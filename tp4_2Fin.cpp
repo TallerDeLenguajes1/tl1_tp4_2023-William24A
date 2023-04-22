@@ -20,14 +20,14 @@ Lista* crearLista();
 Lista* CrearNodo(int x, char y[100], int dur);
 void insertar(Lista** L, int x, char y[100], int dur);
 void mostrarLista(Lista* L);
-void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista* lista);
+Lista* tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista** lista);
 void buscarTarea(Lista* lista);
 void buscarID(Lista* lista, int op);
 void buscarPalabra(Lista* lista, char cadena[100]);
 void ingresarDatos(Lista** lista, int *id, int *i);
 Lista* EliminarTarea(Lista** lista, int id);
 void mostrarDatos(Lista* lista);
-
+Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso, int elim);
 
 int main(){
 	Lista* nueva= crearLista();
@@ -44,9 +44,8 @@ int main(){
 		printf("\nTareas ingresadas hasta el momento: %d", i);
 		printf("\n\n1-Para ingresar nuevas tareas presione.");
 		printf("\n2-Para buscar tareas.");
-		printf("\n3-Para describir el estado de la tarea.");
-		printf("\n4-Eliminar tarea.");
-		printf("\n5-Mostrar datos sobre tareas pendientes.");
+		printf("\n3-Para describir el estado de la tarea o modificar.");
+		printf("\n4-Mostrar datos sobre tareas pendientes.");
 		printf("\n0-Para salir.");
 		printf("\n\nRespuesta:");
 		scanf("%d",&op);
@@ -69,37 +68,49 @@ int main(){
 				break;
 			case 3:
 				system("cls");
-				tareasTerminadas(&term,&noTerm,&enPro,nueva);
-				system("cls");
-				printf("Tareas terminadas: ");
-				mostrarLista(term);
-				printf("\nTareas no terminadas: ");
-				mostrarLista(noTerm);
-				printf("\nTareas en proceso: ");
-				mostrarLista(enPro);
+				if(nueva==NULL && (term || noTerm || enPro)){
+					printf("Mostrar tareas");
+					printf("\nTareas terminadas: ");
+					mostrarLista(term);
+					printf("\nTareas no terminadas: ");
+					mostrarLista(noTerm);
+					printf("\nTareas en proceso: ");
+					mostrarLista(enPro);
+					printf("\n Desea seleccionar alguna tarea tarea: 1(si) 0(no):");
+					scanf("%d", &elim);
+					if(elim){
+						printf("Desea Mover o Eliminar: ");
+						printf("\n1- Mover ");
+						printf("\n0- Eliminar ");
+						printf("\nRespuesta: ");
+						scanf("%d", &elim);
+						Nodo=modificarEstado(&term,&noTerm,&enPro, elim);
+						if(Nodo){
+							free(Nodo->T.Descripcion);
+							free(Nodo);
+							if(elim==0){
+								i--;
+							}	
+						}
+					}
+					
+					
+				}else{
+					nueva=tareasTerminadas(&term,&noTerm,&enPro,&nueva);
+					system("cls");
+					printf("Tareas terminadas: ");
+					mostrarLista(term);
+					printf("\nTareas no terminadas: ");
+					mostrarLista(noTerm);
+					printf("\nTareas en proceso: ");
+					mostrarLista(enPro);	
+				}
+				
 				printf("\nPresione entere para continuar.");
 				getchar();
 				getchar();
 				break;
 			case 4:
-				system("cls");	
-				if(i){
-					printf("Ingrese el ID de la tarea que quiere eliminar:");
-					scanf("%d", &elim);
-					Nodo= EliminarTarea(&nueva, elim);
-					if(Nodo){
-						i--;
-						free(Nodo->T.Descripcion);
-						free(Nodo);	
-					}
-					
-				}else{
-					printf("\nNo ingreso tareas.");
-					printf("\nPresione enter para continuar.");
-					getchar();	
-				}					
-				break;
-			case 5:
 				if(noTerm){
 					mostrarDatos(noTerm);
 				}else{
@@ -158,8 +169,8 @@ void mostrarLista(Lista* L){
 	}
 }
 //escribir si es que una tarea esta terminada o no o en proceso
-void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista* lista){
-	Lista* aux=lista;
+Lista* tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista** lista){
+	Lista* aux=*lista;
 	int resp;
 
 	while(aux){
@@ -182,8 +193,9 @@ void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProces
 				insertar(EnProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
 				break;
 		}	
-		aux=aux->Siguiente;	
+		aux=aux->Siguiente;			
 	}
+	return aux;
 }
 
 //Pregunta cual metodo usar para buscar
@@ -305,9 +317,6 @@ Lista* EliminarTarea(Lista** lista, int id){
 			auxAnterior->Siguiente=aux->Siguiente;
 		}
 		aux->Siguiente=NULL;
-		printf("Tarea eliminada... presione enter para continuar.");
-		getchar();
-		getchar();
 	}
 	return aux;
 }
@@ -323,4 +332,69 @@ void mostrarDatos(Lista* lista){
 	system("cls");
 	printf("La cantidad de tareas que tiene pendiente son: %d", i);
 	printf("\nLa cantidad de tiempo de todas las tareas es: %d", sumar);
+}
+
+Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso, int elim){
+	Lista* aux;
+	int id, op;
+	//system("cls"); 
+	printf("Ingrese el ID que desea modificar: ");
+	scanf("%d", &id);
+	aux=EliminarTarea(noTerminada, id);
+	system("cls");
+	if(aux){
+		if(elim){
+			printf("\nA donde desea mover esta tarea");
+			printf("\n1-Tareas en proceso");
+			printf("\n2-Tareas terminadas");
+			printf("\nRespuesta:");
+			scanf("%d", &op);
+			switch(op){
+				case 1:
+					insertar(enProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+					break;
+				case 2:
+					insertar(terminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+					break;
+			}
+		}
+	}else{
+		aux=EliminarTarea(enProceso, id);
+		if(aux){
+				if(elim){
+					printf("\nA donde desea mover esta tarea");
+					printf("\n1-Tareas no terminadas");
+					printf("\n2-Tareas terminadas");
+					printf("\nRespuesta:");
+					scanf("%d", &op);
+					switch(op){
+						case 1:
+							insertar(noTerminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+							break;
+						case 2:
+							insertar(terminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+							break;
+					}
+				}
+			
+		}else{
+			aux=EliminarTarea(terminada, id);
+			if(elim){
+				printf("\nA donde desea mover esta tarea");
+				printf("\n1-Tareas en proceso");
+				printf("\n2-Tareas no terminadas");
+				printf("\nRespuesta:");
+				scanf("%d", &op);
+				switch(op){
+					case 1:
+						insertar(enProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+						break;
+					case 2:
+						insertar(noTerminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+						break;
+				}
+			}
+		}
+	}
+	return aux;
 }
