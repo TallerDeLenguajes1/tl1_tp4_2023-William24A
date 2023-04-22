@@ -24,8 +24,10 @@ void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProces
 void buscarTarea(Lista* lista);
 void buscarID(Lista* lista, int op);
 void buscarPalabra(Lista* lista, char cadena[100]);
-void ingresarDatos(Lista** lista,int *i);
+void ingresarDatos(Lista** lista, int *id, int *i);
 Lista* EliminarTarea(Lista** lista, int id);
+void mostrarDatos(Lista* lista);
+
 
 int main(){
 	Lista* nueva= crearLista();
@@ -34,7 +36,7 @@ int main(){
 	Lista* enPro=crearLista();
 	Lista* Nodo;
 
-	int i=0, op, elim;
+	int i=0,id=0, op, elim;
 	char cadena[100];
 	do{
 		system("cls");
@@ -44,6 +46,7 @@ int main(){
 		printf("\n2-Para buscar tareas.");
 		printf("\n3-Para describir el estado de la tarea.");
 		printf("\n4-Eliminar tarea.");
+		printf("\n5-Mostrar datos sobre tareas pendientes.");
 		printf("\n0-Para salir.");
 		printf("\n\nRespuesta:");
 		scanf("%d",&op);
@@ -51,7 +54,7 @@ int main(){
 		switch(op){
 			case 1:
 				system("cls");
-				ingresarDatos(&nueva,&i);
+				ingresarDatos(&nueva,&i,&id);
 				break;
 			case 2:
 				system("cls");
@@ -96,6 +99,17 @@ int main(){
 					getchar();	
 				}					
 				break;
+			case 5:
+				if(noTerm){
+					mostrarDatos(noTerm);
+				}else{
+					system("cls");
+					printf("Debe describir el estado de la tarea.\n");
+				}
+				
+				printf("\nPresione enter para continuar.");
+				getchar();
+				break;
 			case 0:
 				system("cls");
 				printf("Saliendo ... presione enter para continuar.");
@@ -106,11 +120,11 @@ int main(){
 	}while(op != 0);	
 	return 0;
 }
-
+//Crear Lista vacia
 Lista* crearLista(){
 	return NULL;
 }
-
+//Crear nodo
 Lista * CrearNodo(int x, char y[100], int dur)
 {
 	Lista* nuevoNodo = (struct Nodo*)malloc(sizeof(struct Nodo));//Debo hacer reserva de memoria para tarea?
@@ -121,13 +135,13 @@ Lista * CrearNodo(int x, char y[100], int dur)
 	nuevoNodo->Siguiente= NULL;
 	return nuevoNodo;
 }
-
+//Insertar nodo a la lista
 void insertar(Lista** L, int x, char y[100], int dur){
 	Lista * nuevoNodo= CrearNodo(x,y,dur);
 	nuevoNodo->Siguiente= *L;
 	*L = nuevoNodo;	
 }
-
+//mostrar lista
 void mostrarLista(Lista* L){
 	Lista* aux=L;
 	
@@ -143,7 +157,7 @@ void mostrarLista(Lista* L){
 		aux= aux->Siguiente;
 	}
 }
-
+//escribir si es que una tarea esta terminada o no o en proceso
 void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista* lista){
 	Lista* aux=lista;
 	int resp;
@@ -172,7 +186,7 @@ void tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProces
 	}
 }
 
-
+//Pregunta cual metodo usar para buscar
 void buscarTarea(Lista* lista){
 	int op;
 	char cadena[100];
@@ -214,7 +228,7 @@ void buscarTarea(Lista* lista){
 		system("cls");
 	}while(op != 0);
 }
-
+//Buscar por id
 void buscarID(Lista* lista, int op){
 	Lista* aux=lista;
 	while(aux && aux->T.TareaID != op){
@@ -229,7 +243,7 @@ void buscarID(Lista* lista, int op){
 		printf("\nNo se encontro el ID buscado.");
 	}
 }
-
+//Buscar por palabra que contenga la descripcion
 void buscarPalabra(Lista* lista, char cadena[100]){
 	Lista* aux=lista;
 	int i=1;
@@ -248,16 +262,17 @@ void buscarPalabra(Lista* lista, char cadena[100]){
 		printf("\nNo se encontro el ID buscado.");
 	}	
 }
-
-void ingresarDatos(Lista** lista, int *i){
+//Ingresar datos al nodo
+void ingresarDatos(Lista** lista, int *id, int *i){
 	int dur,can;
+	*(i)=*(i)+1;
 	char cad[100];
 	do{
 		system("cls");
 		printf("Ingrese tarea\n");
 		
 		do{
-			printf("Ingrese el tiempo de duracion de la tarea(10-100) %d:", *(i)+1);
+			printf("Ingrese el tiempo de duracion de la tarea(10-100) %d:", *(id)+1);
 			scanf("%d", &dur);
 			fflush(stdin);
 		}while(dur<10 || dur>100);
@@ -265,15 +280,15 @@ void ingresarDatos(Lista** lista, int *i){
 		printf("Ingrese la descripcion de la tarea: ");
 		fgets(cad, 100, stdin);
 		fflush(stdin);
-		insertar(lista,*(i)+1,cad,dur);
-		*(i)=*(i)+1;
+		insertar(lista,*(id)+1,cad,dur);
+		*(id)=*(id)+1;
 		system("cls");
 		printf("Se cargo la tarea.\n");
 		printf("Desea ingresar otra tarea? yes(1) no(0)\n");
 		scanf("%d",&can);
 	}while(can!=0);
 }
-
+//devuele el nodo para eliminar
 Lista* EliminarTarea(Lista** lista, int id){
 	Lista* aux= *lista;
 	Lista* auxAnterior= *lista;
@@ -295,4 +310,17 @@ Lista* EliminarTarea(Lista** lista, int id){
 		getchar();
 	}
 	return aux;
+}
+
+void mostrarDatos(Lista* lista){
+	Lista* aux= lista;
+	int sumar=0, i=0;
+	while(aux){
+		sumar+= lista->T.Duracion;
+		aux=aux->Siguiente;
+		i++;
+	}
+	system("cls");
+	printf("La cantidad de tareas que tiene pendiente son: %d", i);
+	printf("\nLa cantidad de tiempo de todas las tareas es: %d", sumar);
 }
