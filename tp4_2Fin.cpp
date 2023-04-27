@@ -18,7 +18,7 @@ typedef struct Tarea Tarea;
 
 Lista* crearLista();
 Lista* CrearNodo(int x, char y[100], int dur);
-void insertar(Lista** L, int x, char y[100], int dur);
+void insertar(Lista** L, Lista* nuevoNodo);
 void mostrarLista(Lista* L);
 Lista* tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista** lista);
 void buscarTarea(Lista* lista);
@@ -147,8 +147,7 @@ Lista * CrearNodo(int x, char y[100], int dur)
 	return nuevoNodo;
 }
 //Insertar nodo a la lista
-void insertar(Lista** L, int x, char y[100], int dur){
-	Lista * nuevoNodo= CrearNodo(x,y,dur);
+void insertar(Lista** L, Lista* nuevoNodo){
 	nuevoNodo->Siguiente= *L;
 	*L = nuevoNodo;	
 }
@@ -171,9 +170,12 @@ void mostrarLista(Lista* L){
 //escribir si es que una tarea esta terminada o no o en proceso
 Lista* tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProceso, Lista** lista){
 	Lista* aux=*lista;
+	Lista* aux2;
+	
 	int resp;
 
 	while(aux){
+		
 		system("cls");
 		printf("Describa el estado de la tarea %d: ", aux->T.TareaID);
 		printf("\n1-Tarea terminada.");
@@ -181,19 +183,20 @@ Lista* tareasTerminadas(Lista** terminadas, Lista** noTerminadas, Lista** EnProc
 		printf("\n3-Tarea en proceso.");
 		printf("\nRespuesta:");
 		scanf("%d", &resp);
-	
+		
+		aux2=EliminarTarea(&aux,aux->T.TareaID);
 		switch(resp){
 			case 1:
-				insertar(terminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				insertar(terminadas, aux2);
 				break;
 			case 2:
-				insertar(noTerminadas, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				insertar(noTerminadas, aux2);
 				break;
 			case 3:
-				insertar(EnProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+				insertar(EnProceso, aux2);
 				break;
 		}	
-		aux=aux->Siguiente;			
+				
 	}
 	return aux;
 }
@@ -277,9 +280,10 @@ void buscarPalabra(Lista* lista, char cadena[100]){
 //Ingresar datos al nodo
 void ingresarDatos(Lista** lista, int *id, int *i){
 	int dur,can;
-	*(i)=*(i)+1;
+	
 	char cad[100];
 	do{
+		*(i)=*(i)+1;
 		system("cls");
 		printf("Ingrese tarea\n");
 		
@@ -292,7 +296,7 @@ void ingresarDatos(Lista** lista, int *id, int *i){
 		printf("Ingrese la descripcion de la tarea: ");
 		fgets(cad, 100, stdin);
 		fflush(stdin);
-		insertar(lista,*(id)+1,cad,dur);
+		insertar(lista, CrearNodo(*(id)+1,cad,dur));
 		*(id)=*(id)+1;
 		system("cls");
 		printf("Se cargo la tarea.\n");
@@ -351,10 +355,10 @@ Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso
 			scanf("%d", &op);
 			switch(op){
 				case 1:
-					insertar(enProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+					insertar(enProceso, aux);
 					break;
 				case 2:
-					insertar(terminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+					insertar(terminada, aux);
 					break;
 			}
 		}
@@ -369,10 +373,10 @@ Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso
 					scanf("%d", &op);
 					switch(op){
 						case 1:
-							insertar(noTerminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+							insertar(noTerminada, aux);
 							break;
 						case 2:
-							insertar(terminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+							insertar(terminada, aux);
 							break;
 					}
 				}
@@ -387,10 +391,10 @@ Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso
 				scanf("%d", &op);
 				switch(op){
 					case 1:
-						insertar(enProceso, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+						insertar(enProceso, aux);
 						break;
 					case 2:
-						insertar(noTerminada, aux->T.TareaID, aux->T.Descripcion, aux->T.Duracion);
+						insertar(noTerminada, aux);
 						break;
 				}
 			}
