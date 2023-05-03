@@ -36,7 +36,7 @@ int main(){
 	Lista* enPro=crearLista();
 	Lista* Nodo;
 
-	int i=0,id=0, op, elim;
+	int i=0, idtarea=0, op, elim;
 	char cadena[100];
 	do{
 		system("cls");
@@ -53,7 +53,7 @@ int main(){
 		switch(op){
 			case 1:
 				system("cls");
-				ingresarDatos(&nueva,&i,&id);
+				ingresarDatos(&nueva, &idtarea, &i);
 				break;
 			case 2:
 				system("cls");
@@ -85,15 +85,12 @@ int main(){
 						printf("\nRespuesta: ");
 						scanf("%d", &elim);
 						Nodo=modificarEstado(&term,&noTerm,&enPro, elim);
-						if(Nodo){
+						if(elim==0){
 							free(Nodo->T.Descripcion);
 							free(Nodo);
-							if(elim==0){
-								i--;
-							}	
+							i--;
 						}
 					}
-					
 					
 				}else{
 					nueva=tareasTerminadas(&term,&noTerm,&enPro,&nueva);
@@ -402,3 +399,11 @@ Lista* modificarEstado(Lista** terminada, Lista** noTerminada, Lista** enProceso
 	}
 	return aux;
 }
+
+/*Lista* buscarNodo(Lista* L, int id){
+	Lista* aux= L;
+	while(aux && aux->T.TareaID != id){
+		aux=aux->Siguiente;
+	}
+	return aux;
+}*/
